@@ -1,0 +1,6 @@
+lead_id,company,stage,owner,days_in_stage,deal_value,next_action,last_updated
+LEAD-5001,Acme Co,Qualified,Sales,7,12000,Send proposal,2026-01-05
+LEAD-5002,Orbit LLC,Contacted,Sales,3,4500,Book call,2026-01-05
+LEAD-5003,Northwind,Proposal,Sales,10,20000,Follow up,2026-01-05
+LEAD-5004,Skyline Inc,Negotiation,Owner,5,35000,Finalize terms,2026-01-05
+LEAD-5005,Pine Labs,Contacted,Sales,9,8000,Re-engage,2026-01-05
