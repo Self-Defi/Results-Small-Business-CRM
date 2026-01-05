@@ -12,18 +12,69 @@
       <h1>Sales Pipeline — Proof v1</h1>
       <p class="muted">Reads a CSV export and flags stalled deals. No integrations yet.</p>
     </div>
+
     <div class="pillRow">
-      <span class="pill " id="asOf">As of: —</span><span class="pill " id="totalCount">Leads: —</span><span class="pill warn" id="stalledCount">Stalled: —</span>
+      <span class="pill" id="asOf">As of: —</span>
+      <span class="pill" id="totalCount">Leads: —</span>
+      <span class="pill warn" id="stalledCount">Stalled: —</span>
     </div>
   </header>
 
+  <!-- NEW: Controls -->
+  <section class="controls">
+    <div class="controlsLeft">
+      <button class="btn" id="btnRefresh">Refresh</button>
+
+      <label class="toggle">
+        <input type="checkbox" id="toggleDemo" />
+        <span>Use Demo Data</span>
+      </label>
+
+      <div class="field">
+        <label for="stalledDays" class="fieldLabel">Stalled ≥ <span id="stalledDaysLabel">7</span> days</label>
+        <input id="stalledDays" type="range" min="7" max="30" value="7" />
+      </div>
+
+      <div class="field">
+        <label class="fieldLabel" for="stageFilter">Stage</label>
+        <select id="stageFilter">
+          <option value="__all__">All</option>
+        </select>
+      </div>
+    </div>
+
+    <div class="controlsRight">
+      <div class="searchWrap">
+        <input id="searchBox" type="search" placeholder="Search company / lead / owner / stage…" />
+      </div>
+
+      <button class="btn" id="btnExport">Export CSV</button>
+      <button class="btn" id="btnCopyJson">Copy JSON</button>
+    </div>
+  </section>
+
   <main class="grid">
     <section class="card">
-      <h2>Top Stalled Deals</h2>
-      <p class="muted">Sorted by days in stage (highest first).</p>
+      <div class="cardHead">
+        <div>
+          <h2>Top Stalled Deals</h2>
+          <p class="muted">Sorted by days in stage (highest first). Tap a row to open details.</p>
+        </div>
+
+        <div class="microPills">
+          <span class="pill" id="viewCount">Showing: —</span>
+          <span class="pill bad" id="stalledValuePill">Stalled $: —</span>
+        </div>
+      </div>
+
       <div class="tableWrap">
         <table id="mainTable">
-          <thead><tr><th>Lead</th><th>Company</th><th>Stage</th><th>Days in Stage</th><th>Value</th><th>Owner</th><th>Next Action</th><th>Updated</th></tr></thead>
+          <thead>
+            <tr>
+              <th>Lead</th><th>Company</th><th>Stage</th><th>Days in Stage</th>
+              <th>Value</th><th>Owner</th><th>Next Action</th><th>Updated</th>
+            </tr>
+          </thead>
           <tbody></tbody>
         </table>
       </div>
@@ -31,29 +82,100 @@
 
     <section class="card">
       <h2>Pipeline Summary</h2>
+
       <div class="kpis">
-    <div class="kpi">
-      <div class="kpiLabel">Total Value</div>
-      <div class="kpiValue" id="totalValue">—</div>
-    </div>
-    <div class="kpi">
-      <div class="kpiLabel">Stalled Value</div>
-      <div class="kpiValue" id="stalledValue">—</div>
-    </div>
-    <div class="kpi">
-      <div class="kpiLabel">Worst Stage</div>
-      <div class="kpiValue" id="worstStage">—</div>
-    </div>
-    <div class="kpi">
-      <div class="kpiLabel">Top Deal</div>
-      <div class="kpiValue" id="topDeal">—</div>
-    </div></div>
-<h3>Stalled by Stage</h3><ul id="byStage" class="list"></ul>
-<h3>Rules (Proof)</h3><ul class="list"><li>Stalled = days_in_stage >= 7 (adjust later)</li><li>Proof helps visibility; production can automate follow-ups</li><li>No CRM integrations in v1</li></ul>
+        <div class="kpi">
+          <div class="kpiLabel">Total Value</div>
+          <div class="kpiValue" id="totalValue">—</div>
+        </div>
+        <div class="kpi">
+          <div class="kpiLabel">Stalled Value</div>
+          <div class="kpiValue" id="stalledValue">—</div>
+        </div>
+        <div class="kpi">
+          <div class="kpiLabel">Worst Stage</div>
+          <div class="kpiValue" id="worstStage">—</div>
+        </div>
+        <div class="kpi">
+          <div class="kpiLabel">Top Deal</div>
+          <div class="kpiValue" id="topDeal">—</div>
+        </div>
+      </div>
+
+      <h3>Stalled by Stage</h3>
+      <ul id="byStage" class="list"></ul>
+
+      <h3>Rules (Proof)</h3>
+      <ul class="list">
+        <li>Stalled = days_in_stage ≥ threshold (slider)</li>
+        <li>Proof helps visibility; production can automate follow-ups</li>
+        <li>No CRM integrations in v1</li>
+      </ul>
     </section>
   </main>
 
-  <footer class="foot">Proof v1 = CSV → stalled visibility → next-step clarity in <60 seconds.</footer>
+  <!-- NEW: Deal Drawer -->
+  <aside class="drawer" id="drawer" aria-hidden="true">
+    <div class="drawerPanel">
+      <div class="drawerHead">
+        <div>
+          <div class="drawerTitle" id="dTitle">Deal</div>
+          <div class="drawerSub muted" id="dSub">—</div>
+        </div>
+        <button class="iconBtn" id="btnCloseDrawer" aria-label="Close">✕</button>
+      </div>
+
+      <div class="drawerBody">
+        <div class="drawerGrid">
+          <div class="dField">
+            <div class="dLabel">Lead ID</div>
+            <div class="dValue" id="dLead">—</div>
+          </div>
+          <div class="dField">
+            <div class="dLabel">Stage</div>
+            <div class="dValue" id="dStage">—</div>
+          </div>
+          <div class="dField">
+            <div class="dLabel">Owner</div>
+            <div class="dValue" id="dOwner">—</div>
+          </div>
+          <div class="dField">
+            <div class="dLabel">Days in Stage</div>
+            <div class="dValue" id="dDays">—</div>
+          </div>
+          <div class="dField">
+            <div class="dLabel">Deal Value</div>
+            <div class="dValue" id="dValue">—</div>
+          </div>
+          <div class="dField">
+            <div class="dLabel">Last Updated</div>
+            <div class="dValue" id="dUpdated">—</div>
+          </div>
+        </div>
+
+        <div class="dField">
+          <div class="dLabel">Next Action</div>
+          <input class="input" id="dNextAction" placeholder="e.g., Send proposal, Book call…" />
+        </div>
+
+        <div class="drawerActions">
+          <button class="btn good" id="btnMarkContacted">Mark Contacted</button>
+          <button class="btn" id="btnSaveAction">Save Next Action</button>
+          <button class="btn warn" id="btnNudge">Nudge (+3 days)</button>
+          <button class="btn bad" id="btnCloseLost">Close Lost</button>
+        </div>
+
+        <div class="muted tiny" id="drawerHint">
+          Actions are local-only (proof). In production these would write back to CRM / automation.
+        </div>
+      </div>
+    </div>
+
+    <div class="drawerBackdrop" id="drawerBackdrop"></div>
+  </aside>
+
+  <footer class="foot">Proof v1 = CSV → stalled visibility → next-step clarity in &lt;60 seconds.</footer>
+
   <script src="app.js"></script>
 </body>
 </html>
